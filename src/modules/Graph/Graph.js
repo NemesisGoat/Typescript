@@ -1,5 +1,5 @@
 class Graph {
-    constructor({ id, width = 300, height = 300, WIN, callbacks = {} }) {
+    constructor({ id, width = 300, height = 300, WIN  = {LEFT: -10, BOTTOM: -10, WIDTH: 20, HEIGHT: 20}, callbacks = {} }) {
         let canvas;
         this.WIN = WIN;
         if (id) {

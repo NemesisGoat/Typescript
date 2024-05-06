@@ -31,10 +31,11 @@ const useGraph = (renderScene) => {
     }
 
     const getGraph = (options) => {
-        graph = new Graph({
+        const graph = new Graph({
             options
         });
         renderLoop();
+        console.log(graph, options);
         return graph;
     }
 

@@ -1,6 +1,5 @@
 import React, {useEffect} from "react";
 import Graph from "../../modules/Graph/Graph";
-import UI from "../../modules/Graph/UI";
 import useGraph from "../../modules/Graph/useGraph";
 import UI2D from "./UI2D/UI2D";
 
@@ -16,7 +15,6 @@ export type TFunction = {
     perivative?: any;
 }
 const Graph2D: React.FC = () => {
-
     const WIN = {
         LEFT: -10,
         BOTTOM: -10,
@@ -278,7 +276,7 @@ const Graph2D: React.FC = () => {
 
     useEffect(() => {
         //@ts-ignore
-        graph = getGraph({
+        const graph = getGraph({
             WIN,
             id: 'canvas',
             width: 600,
@@ -292,12 +290,15 @@ const Graph2D: React.FC = () => {
             }
         });
 
+        console.log(graph);
+
         return () => {
             cancelGraph();
         }
     })
 
     return (<div>
+        <div><h1>hgsdjgk</h1></div>
         <UI2D funcs={drawn}></UI2D>
     </div>)
 }
