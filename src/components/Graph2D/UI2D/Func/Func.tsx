@@ -1,5 +1,6 @@
 import React, {KeyboardEvent} from "react";
 import { TFunction } from "../../Graph2D";
+import useMyFunction from "../hooks/useMyFunction";
 
 export type TFunc = {
     func: TFunction;
@@ -9,13 +10,7 @@ const Func: React.FC<TFunc> = (props: TFunc) => {
     const { func } = props;
 
     const changeFunction = (event: KeyboardEvent<HTMLInputElement>) => {
-        try {
-            let f = () => 0;
-            eval(`f = function(x) {return ${event.currentTarget.value};}`);
-            func.f = f;
-        } catch {
-
-        }
+        func.f = getFunction(event.currentTarget.value);
     }
 
     return (<div>

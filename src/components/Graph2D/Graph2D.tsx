@@ -3,7 +3,7 @@ import Graph from "../../modules/Graph/Graph";
 import useGraph from "../../modules/Graph/useGraph";
 import UI2D from "./UI2D/UI2D";
 
-type TF = (x:number) => number;
+export type TF = (x:number) => number;
 
 export type TFunction = {
     f: TF;
@@ -290,15 +290,12 @@ const Graph2D: React.FC = () => {
             }
         });
 
-        console.log(graph);
-
         return () => {
             cancelGraph();
         }
     })
 
     return (<div>
-        <div><h1>hgsdjgk</h1></div>
         <UI2D funcs={drawn}></UI2D>
     </div>)
 }

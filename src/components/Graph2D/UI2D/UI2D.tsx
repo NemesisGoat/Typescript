@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { TFunc } from "./Func/Func"
 import { TFunction } from "../Graph2D"
+import useMyFunction from "./hooks/useMyFunction"
 
 
 type TUI2D = {
@@ -13,7 +14,7 @@ const UI2D: React.FC<TUI2D> = (props: TUI2D) => {
 
     const addFunction = () => {
         funcs.push({
-            f: () => 0,
+            f: getFunction(0),
             color: 'black',
             width: 2,
             a: 1,
