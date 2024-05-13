@@ -1,26 +1,30 @@
 import Calculator from "../Calculator";
 
 class Polynomial {
-    constructor (poly = []) {
+    constructor(poly = []) {
         this.poly = poly;
         this.poly.sort((a, b) => b.power - a.power);
     }
 
-    toString() {
-        const polynomial = [];
-        this.poly.forEach(member => {
-            member = member.value.toString() + '*x^' + member.power.toString();
-            polynomial.push(member);
-        })
-        let polynomialStr = polynomial.join(' + ');
-        polynomialStr = ' ' + polynomialStr + ' ';
-        return polynomialStr.replaceAll('+ -', '- ').replaceAll('*x^0', '').replaceAll('x^1 ', 'x ').replaceAll(' 1*x', ' x').replaceAll(' + 0 ', ' ');
+    getValue(x) {
+        const calc = new Calculator();
+        return this.poly.reduce((S, elem) =>
+            calc.add(
+                S,
+                calc.prod(
+                    calc.pow(x, elem.power),
+                    elem.value)
+            ),
+            calc.zero(null, x)
+        );
     }
 
-    getValue(x) {
-        const calculator = new Calculator;
-        console.log(x);
-        return this.poly.reduce((S, elem) => calculator.add(calculator.mult(elem.value, calculator.pow(x, elem.power)), S), calculator.zero(null, x));
+    toString() {
+        return this.poly.map(
+            (el, i) => (el.value > 0) ?
+                `${(i === 0) ? '' : ' + '}${el.toString()}` :
+                el.toString()
+        ).join('');
     }
 }
 

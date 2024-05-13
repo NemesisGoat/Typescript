@@ -1,1 +1,1 @@
-function Surfaces() { }
+function Surfaces() {}

@@ -1,71 +1,86 @@
-import { useRef } from 'react';
-import Calculator from "../../modules/calculator/Calculator";
+import React from "react";
 
-const Calc = (props) => {
+import Calculator from "../../modules/Calculator/Calculator";
+import PolynomialCalculator from "../../modules/Calculator/PolynomialCalculator";
 
-    let bRef = useRef(0);
-    let cRef = useRef(0);
-    let aRef = useRef(0);
+class Calc extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const operandHandler = (operand) => {
-        const calc = new Calculator();
-        const a = calc.getValue(aRef.current.value);
-        const b = calc.getValue(bRef.current.value);
+        this.aRef = React.createRef();
+        this.bRef = React.createRef();
+    }
+
+    getCalculator(value) {
+        if (value.includes('*x^')) {
+            return new PolynomialCalculator;
+        }
+        return new Calculator;
+    }
+
+    operandHandler(operand) {
+        const aValue = this.aRef.current.value;
+        const bValue = this.bRef.current.value;
+        const calc = this.getCalculator(aValue);
+        const a = calc.getValue(aValue);
+        const b = operand === 'prod' ?
+            (new Calculator()).getValue(bValue) :
+            calc.getValue(bValue);
         const result = calc[operand](a, b);
-        cRef.current.value = result.toString();
-        if (cRef.current.value.includes('NaN')) {
-            cRef.current.value = 'Да я не могу блин';
+        if (result === null) {
+            document.getElementById('c').value = 'чё-то не так, товарищ... :(';
+        } else {
+            document.getElementById('c').value = result.toString();
         }
     }
 
-    const getValueHandler = () => {
-        const calc = new Calculator;
-        let x = document.getElementById('point').value;
-        let polynomial = document.getElementById('c').value;
-        document.getElementById('value').value = calc.getValueAtPoint(polynomial, x);
+    polyAtAPointHandler() {
+        const universalCalc = new Calculator;
+        const calc = new PolynomialCalculator;
+        const poly = calc.getPolynomial(document.getElementById('poly').value);
+        const x = universalCalc.getValue(document.getElementById('x').value);
+        const polyAtAPoint = poly.getValue(x);
+        document.getElementById('polyAtAPoint').value = polyAtAPoint;
     }
 
-    const addEventListeners = () => {
-
-        const buttons = document.querySelectorAll('.operand');
-        buttons.forEach(button =>
-            button.addEventListener(
-                'click',
-                (event) => this.operandHandler(event)
-            )
-        );
-        document.getElementById('getValueButton')
-            .addEventListener(
-                'click',
-                () => this.getValueHandler());
-
+    render() {
+        return (<>
+            <div align="center" className="beautyDiv">
+                <p className="beautyP">калькулятор (универсальный!!!)</p>
+            </div>
+            <div align="center" className="beautyDiv">
+                <textarea ref={this.aRef} placeholder="введите нечто первое"></textarea>
+                <div>
+                    <button onClick={() => this.operandHandler("add")}>+</button>
+                    <button onClick={() => this.operandHandler("sub")}>-</button>
+                    <button onClick={() => this.operandHandler('mult')}>*</button>
+                    <button onClick={() => this.operandHandler("div")}>/</button>
+                    <button onClick={() => this.operandHandler("pow")}>^</button>
+                    <button onClick={() => this.operandHandler('prod')}>prod</button>
+                    <button onClick={() => this.operandHandler('one')}>1</button>
+                    <button onClick={() => this.operandHandler('zero')}>0</button>
+                </div>
+                <textarea ref={this.bRef} placeholder="введите нечто второе"></textarea>
+                <div>
+                    <p> = </p>
+                    <textarea id="c" placeholder="результат (дай бог правильный)"></textarea>
+                </div>
+            </div>
+            <div align="center" className="beautyDiv">
+                <p className="beautyP">↓ посчитать значение полинома в точке ↓</p>
+            </div>
+            <div align="center" className="beautyDiv">
+                <textarea id="poly" placeholder="введите полином"></textarea>
+                <textarea id="x" placeholder="введите икс"></textarea>
+                <div>
+                    <button onClick={() => this.polyAtAPointHandler()}> = </button>
+                </div>
+                <div>
+                    <textarea id="polyAtAPoint" placeholder="результат"></textarea>
+                </div>
+            </div>
+        </>);
     }
-
-    return (<div>
-        <div className="titleBlock">
-            <h1 className="title" id="partOne">Calcu</h1>
-            <h1 className="title" id="partTwo">lator</h1>
-        </div>
-        <div className="inputBlock">
-            <textarea ref={aRef} placeholder="a" className="input"></textarea>
-            <textarea ref={bRef} placeholder="b" className="input"></textarea>
-            <textarea ref={cRef} placeholder="result" className="input"></textarea>
-            <div className='operandBlock'>
-                <button className="operand" onClick={() => operandHandler("add")}>+</button>
-                <button className="operand" onClick={() => operandHandler("sub")}>-</button>
-                <button className="operand" onClick={() => operandHandler("mult")}>*</button>
-                <button className="operand" onClick={() => operandHandler("div")}>/</button>
-                <button className="operand" onClick={() => operandHandler("prod")}>scal</button>
-                <button className="operand" onClick={() => operandHandler("pow")}>^</button>
-            </div>
-            <input id="point" placeholder="Найти значение в точке" className="input"></input>
-            <button id='getValueButton' className="findButton">Искать</button>
-            <div></div>
-            <input id="value" placeholder="Значение" className="input"></input>
-            <div className="operands">
-            </div>
-        </div>
-    </div>)
 }
 
 export default Calc;

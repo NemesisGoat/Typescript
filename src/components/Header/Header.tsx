@@ -5,15 +5,14 @@ type THeader = {
     setPageName: (name: EPAGES) => void;
 }
 
-const Header: React.FC <THeader> = (props: THeader) => {
-
+const Header: React.FC<THeader> = (props: THeader) => {
     const { setPageName } = props;
-    return (<>
-        <h1>Хедер!</h1>
-        {/* <button onClick={() => setPageName(EPAGES.GRAPH3D)}>3D графика</button> */}
-        <button onClick={() => setPageName(EPAGES.GRAPH2D)}>2D графика</button>
-        <button onClick={() => setPageName(EPAGES.CALC)}>Калькулятор</button>
-    </>);
+
+    return (<div>
+        <button onClick={() => setPageName(EPAGES.GRAPH_2D)}>Графика 2Д</button>
+        <button onClick={() => setPageName(EPAGES.GRAPH_3D)}>Графика 3Д</button>
+        <button onClick={() => setPageName(EPAGES.CALC)}>Бульбулятор</button>
+    </div>);
 }
 
 export default Header;

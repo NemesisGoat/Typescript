@@ -1,4 +1,4 @@
-Surfaces.prototype.hyperbolicCylinder = () => {
+Surfaces.prototype.solarSystem = () => {
     const points = [];
     const edges  = [];
     const polygons = [];

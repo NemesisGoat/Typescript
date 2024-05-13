@@ -1,7 +1,8 @@
 import Point from "./Point";
 
 class Light extends Point {
-    constructor(x, y, z, lumen = 100) {
+    lumen: number;
+    constructor(x: number, y: number, z: number, lumen = 1500) {
         super(x, y, z);
         this.lumen = lumen;
     }

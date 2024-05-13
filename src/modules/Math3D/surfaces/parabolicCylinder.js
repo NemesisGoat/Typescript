@@ -1,4 +1,4 @@
-Surfaces.prototype.hyperbolicCylinder = () => {
+Surfaces.prototype.parabolicCylinder = () => {
     const points = [];
     const edges  = [];
     const polygons = [];

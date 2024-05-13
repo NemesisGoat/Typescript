@@ -1,25 +1,53 @@
-import React, {KeyboardEvent} from "react";
+import React, { KeyboardEvent } from "react";
 import { TFunction } from "../../Graph2D";
 import useMyFunction from "../hooks/useMyFunction";
 
-export type TFunc = {
+type TFunc = {
     func: TFunction;
+    index: number;
+    delFunction: (index: number) => void
 }
 
 const Func: React.FC<TFunc> = (props: TFunc) => {
-    const { func } = props;
+    const { func, index, delFunction } = props;
+    const [getFunction, getFunctionBody] = useMyFunction();
 
     const changeFunction = (event: KeyboardEvent<HTMLInputElement>) => {
         func.f = getFunction(event.currentTarget.value);
+<<<<<<< Updated upstream
+=======
+    }
+
+    const changeColor = (event: KeyboardEvent<HTMLInputElement>) => {
+        func.color = event.currentTarget.value;
+    }
+
+    const changeWidth = (event: KeyboardEvent<HTMLInputElement>) => {
+        const width = Number(event.currentTarget.value);
+        if (!isNaN(width) && width > 0 && width < 10) {
+            func.width = width;
+        }
+>>>>>>> Stashed changes
     }
 
     return (<div>
-        <div id="funcInput">
-                <input type="checkbox" id="setInterpolation"></input>
-                <label htmlFor="setInterpolation">Интеполяция</label>
-                <div id="listOfFunctions"></div>
-                <button id="addFunction">+</button>
-            </div>
-            <canvas id="canvas"></canvas>
-        </div>)
+        <input 
+            onKeyUp={changeFunction} 
+            placeholder="f(x)" 
+            defaultValue={getFunctionBody(func.f)}
+        />
+        <input 
+            onKeyUp={changeColor} 
+            placeholder="color" 
+            defaultValue={func.color}
+        />
+        <input 
+            onKeyUp={changeWidth}
+            placeholder="width" 
+            defaultValue={func.width}
+        />
+        <button onClick={() => delFunction(index)}>-</button>
+    </div>);
 }
+
+export default Func;

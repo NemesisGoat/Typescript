@@ -5,12 +5,12 @@ class Complex {
     }
 
     toString() {
-        return this.im ?
-            this.im > 0 ?
-                `${this.re} + i*${this.im}` :
-                `${this.re} - i*${-this.im}` :
+        return this.im ? 
+            this.im > 0 ? 
+                `${this.re}+i*${this.im}` :
+                `${this.re}-i*${-this.im}` :
             this.re.toString();
     }
-}
+};
 
 export default Complex;
