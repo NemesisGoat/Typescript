@@ -14,8 +14,6 @@ const Func: React.FC<TFunc> = (props: TFunc) => {
 
     const changeFunction = (event: KeyboardEvent<HTMLInputElement>) => {
         func.f = getFunction(event.currentTarget.value);
-<<<<<<< Updated upstream
-=======
     }
 
     const changeColor = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -27,7 +25,6 @@ const Func: React.FC<TFunc> = (props: TFunc) => {
         if (!isNaN(width) && width > 0 && width < 10) {
             func.width = width;
         }
->>>>>>> Stashed changes
     }
 
     return (<div>

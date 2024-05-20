@@ -1,60 +1,3 @@
-<<<<<<< Updated upstream
-export type TGraph = {
-    id?:string; 
-    width?:number; 
-    height?: number;
-    WIN: any;
-    callbacks: any
-}
-
-class Graph {
-
-    private canvas: HTMLCanvasElement;
-
-    constructor({ id, width = 300, height = 300, WIN  = {LEFT: -10, BOTTOM: -10, WIDTH: 20, HEIGHT: 20}, callbacks = {} }: TGraph) {
-        if (id) {
-            this.canvas = document.getElementById(id);
-        } else {
-            this.canvas = document.createElement('this.canvas');
-            document.querySelector('body').appendChild(this.canvas);
-        }
-        this.canvas.width = width;
-        this.canvas.height = height;
-        this.canvas = canvas;
-        this.context = canvas.getContext('2d');
-        const { wheel, mousemove, mouseleave, mouseup, mousedown } = callbacks;
-        canvas.addEventListener('wheel', wheel);
-        canvas.addEventListener('mousemove', mousemove);
-        canvas.addEventListener('mouseleave', mouseleave);
-        canvas.addEventListener('mouseup', mouseup);
-        canvas.addEventListener('mousedown', mousedown);
-        this.PI2 = 2 * Math.PI;
-
-        this.canvasV = document.createElement('canvas');
-        this.canvasV.width = width;
-        this.canvasV.height = height;
-        this.contextV = this.canvasV.getContext('2d');
-    }
-
-    xs(x) {
-        return (x - this.WIN.LEFT) / this.WIN.WIDTH * this.canvasV.width;
-    }
-
-    ys(y) {
-        return (this.WIN.HEIGHT - (y - this.WIN.BOTTOM)) / this.WIN.HEIGHT * this.canvasV.height;
-    }
-
-    sx(x) {
-        return x * this.WIN.WIDTH / this.canvasV.width;
-    }
-
-    sy(y) {
-        return -y * this.WIN.HEIGHT / this.canvasV.height;
-    }
-
-
-    clear () {
-=======
 import Point from "../Math3D/entites/Point";
 
 export type TWIN = {
@@ -85,8 +28,8 @@ export type TGraph = {
         wheel: (event: WheelEvent) => void;
         mousemove: (event: MouseEvent) => void;
         mouseleave: () => void;
-        mouseup: () => void;
-        mousedown: () => void;
+        mouseup: (event: MouseEvent) => void;
+        mousedown: (event: MouseEvent) => void;
     };
 }
 
@@ -138,16 +81,11 @@ class Graph {
     }
 
     clear(): void {
->>>>>>> Stashed changes
         this.contextV.clearRect(0, 0, this.canvasV.width, this.canvasV.height)
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     }
 
-<<<<<<< Updated upstream
-    line(x1, y1, x2, y2, color = 'purple', width = 2) {
-=======
     line(x1: number, y1: number, x2: number, y2: number, color = '#b55a5d', width = 2): void {
->>>>>>> Stashed changes
         this.contextV.beginPath();
         this.contextV.strokeStyle = color;
         this.contextV.lineWidth = width;
@@ -157,11 +95,7 @@ class Graph {
         this.contextV.closePath();
     }
 
-<<<<<<< Updated upstream
-    point (x, y, color = 'black', size = 2) {
-=======
     point(x: number, y: number, color = '#b55a5d', size = 2): void {
->>>>>>> Stashed changes
         this.contextV.beginPath();
         this.contextV.strokeStyle = color;
         this.contextV.fillStyle = color;
@@ -171,9 +105,6 @@ class Graph {
         this.contextV.closePath();
     }
 
-<<<<<<< Updated upstream
-    print (x, y, text, color, size) {
-=======
     print(
         x: number,
         y: number,
@@ -182,45 +113,10 @@ class Graph {
         size = 350,
         isGraphName = true
     ): void {
->>>>>>> Stashed changes
         this.contextV.font = size / this.WIN.WIDTH + "px Verdana";
         this.contextV.fillStyle = color;
         this.contextV.fillText(text, this.xs(x), this.ys(y));
         this.contextV.stroke();
-<<<<<<< Updated upstream
-    }
-
-    dashedLine (x1, y1, x2, y2, color, width) {
-        this.contextV.beginPath();
-        this.contextV.setLineDash([20, 5]);
-        this.contextV.strokeStyle = color || 'black';
-        this.contextV.lineWidth = width || 4;
-        this.contextV.moveTo(this.xs(x1), this.ys(y1));
-        this.contextV.lineTo(this.xs(x2), this.ys(y2));
-        this.contextV.stroke();
-        this.contextV.closePath();
-        this.contextV.setLineDash([0, 0]);
-    }
-
-    polygon(points, color = '#f805') {
-        this.contextV.fillStyle = color;
-        this.contextV.beginPath();
-        this.contextV.moveTo(this.xs(points[0].x), this.ys(points[0].y));
-        for (let i = 1; i < points.length; i++) {
-            this.contextV.lineTo(this.xs(points[i].x), this.ys(points[i].y));
-        }
-        this.contextV.lineTo(this.xs(points[0].x), this.ys(points[0].y));
-        this.contextV.closePath();
-        this.contextV.fill();
-    }
-
-    renderFrame() {
-        this.context.drawImage(this.canvasV, 0, 0);
-    }
-}
-
-export default Graph;
-=======
     };
 
     polygon(points: Omit<Point, 'z'>[], color = 'purple'): void {
@@ -237,4 +133,3 @@ export default Graph;
 }
 
 export default Graph;
->>>>>>> Stashed changes

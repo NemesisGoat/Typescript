@@ -2,18 +2,16 @@ import React, { useEffect } from "react";
 import useGraph from "../../modules/Graph/useGraph";
 import UI2D from "./UI2D/UI2D";
 import Graph from "../../modules/Graph/Graph";
-import './Graph2D.css';
+import "./Graph2D.css";
 
-<<<<<<< Updated upstream
-export type TF = (x:number) => number;
-=======
 export type TF = (x: number) => number;
->>>>>>> Stashed changes
 
 export type TFunction = {
     f: TF;
     color: string;
     width: number;
+    getPerivative?: boolean;
+    perivative?: (x: number) => TF;
 }
 
 const Graph2D: React.FC = () => {
@@ -27,7 +25,11 @@ const Graph2D: React.FC = () => {
     const [getGraph, cancelGraph] = useGraph(render);
 
     const funcs: TFunction[] = [];
-    let canMove = false;
+    let isDragging = false;
+    let xDrag = 0;
+    let yDrag = 0;
+    let useInterpolation = false;
+    let coordX = 0;
 
     const wheel = (event: WheelEvent) => {
         const delta = 1 + (0.25 * (Math.abs(event.deltaY) / event.deltaY));
@@ -38,29 +40,40 @@ const Graph2D: React.FC = () => {
     };
 
     const mouseup = () => {
-        canMove = false;
+        isDragging = false;
     };
 
     const mouseleave = () => {
-        canMove = false;
+        isDragging = false;
     };
 
     const mousedown = () => {
-        canMove = true;
+        isDragging = true;
     };
 
     const mousemove = (event: MouseEvent) => {
-        if (canMove && graph) {
+        if (isDragging && graph) {
             WIN.LEFT -= graph.sx(event.movementX);
             WIN.BOTTOM -= graph.sy(event.movementY);
         }
     };
 
-    const printOXY = (): void => {
+    // const getX = (event: MouseEvent) => {
+    //     if (graph) {
+    //         coordX = graph.sx(event.offsetX);
+    //         funcs.forEach((item, index) => {
+    //             if (item && item.f && item.getPerivative) {
+    //                 getPerivative(item.f, coordX, 0.001, index);
+    //             }
+    //         })
+    //     }
+    // }
+
+    const grid = (): void => {
         if (!graph) {
             return;
         }
-        
+
         for (let i = -1; i >= WIN.LEFT; i = i - 1) {
             graph.line(i, WIN.HEIGHT + WIN.BOTTOM, i, WIN.BOTTOM, 'rgb(70, 70, 70)', 1);
         }
@@ -77,11 +90,12 @@ const Graph2D: React.FC = () => {
             graph.line(WIN.LEFT, i, WIN.WIDTH + WIN.LEFT, i, 'rgb(70, 70, 70)', 1);
         }
 
-        //Оси координат
+        //оси координат
         graph.line(WIN.LEFT, 0, WIN.WIDTH + WIN.LEFT, 0, 'black', 4);
         graph.line(0, WIN.BOTTOM + WIN.HEIGHT, 0, WIN.BOTTOM, 'black', 4);
 
-        //Рисочки
+
+        //рисочки
         for (let i = -1; i > WIN.LEFT; i--) {
             graph.line(i, 0.1, i, -0.1, '#000', 4);
             graph.print(i - 0.3, -0.3, String(i), 'black', 350)
@@ -128,7 +142,7 @@ const Graph2D: React.FC = () => {
             return;
         }
         graph.clear();
-        printOXY();
+        grid();
         funcs.forEach(func =>
             func && printFunction(func.f, func.color, func.width)
         );
@@ -164,18 +178,12 @@ const Graph2D: React.FC = () => {
         }
     });
 
-<<<<<<< Updated upstream
-    return (<div>
-        <UI2D funcs={drawn}></UI2D>
-    </div>)
-=======
     return (<div className="beautyDiv">
         <div>
             <canvas id='canvas' width='300' height='300' />
         </div>
         <UI2D funcs={funcs} />
     </div>);
->>>>>>> Stashed changes
 }
 
 export default Graph2D;

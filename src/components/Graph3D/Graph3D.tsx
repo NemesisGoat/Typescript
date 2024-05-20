@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import useGraph from '../../modules/Graph/useGraph';
-import Point from '../../modules/Math3D/entites/Point';
-import Light from '../../modules/Math3D/entites/Light';
-import Sphera from '../../modules/Math3D/surfaces/sphera';
-import Math3D from "../../modules/Math3D/Math3D";
+import useGraph, { TWIN3D, Graph } from '../../modules/Graph';
+import Math3D, { 
+    Point, Light, Polygon, EDistance, Sphera 
+} from "../../modules/Math3D";
 
 const Graph3D = () => {
-    const WIN = {
+    const WIN: TWIN3D = {
         LEFT: -5,
         BOTTOM: -5,
         WIDTH: 10,
@@ -14,7 +13,7 @@ const Graph3D = () => {
         CENTER: new Point(0, 0, -40),
         CAMERA: new Point(0, 0, -50)
     }
-    let graph = null;
+    let graph: Graph | null = null;
     const [getGraph, cancelGraph] = useGraph(renderScene);
     const LIGHT = new Light(-40, 15, 0, 1500);
     const math3D = new Math3D({ WIN });
@@ -32,12 +31,16 @@ const Graph3D = () => {
         canMove = false;
     }
 
+    function mouseleave() {
+        canMove = false;
+    }
+
     function mousedown() {
         canMove = true;
     }
 
     // надо как-то поменять
-    function mousemove(event) {
+    function mousemove(event: MouseEvent) {
         const gradus = Math.PI / 180 / 4;
         if (canMove) {
             scene.forEach(surface =>
@@ -53,9 +56,9 @@ const Graph3D = () => {
         dy = event.offsetY;
     }
 
-    function wheel(event) {
+    function wheel(event: WheelEvent) {
         event.preventDefault();
-        const delta = (event.wheelDelta > 0) ? 1.1 : 0.9;
+        const delta = (event.deltaY > 0) ? 1.1 : 0.9;
         const matrix = math3D.zoom(delta);
         scene.forEach(surface =>
             surface.points.forEach(point =>
@@ -64,16 +67,16 @@ const Graph3D = () => {
         );
     }
 
-    function renderScene(FPS) {
+    function renderScene(FPS: number): void {
         if (!graph) {
             return;
         }
         graph.clear();
         if (showPolygons) {
-            const polygons = [];
+            const polygons: Polygon[] = [];
             scene.forEach((surface, index) => {
-                math3D.calcDistance(surface, WIN.CAMERA, 'distance');
-                math3D.calcDistance(surface, LIGHT, 'lumen');
+                math3D.calcDistance(surface, WIN.CAMERA, EDistance.distance);
+                math3D.calcDistance(surface, LIGHT, EDistance.lumen);
                 surface.polygons.forEach(polygon => {
                     polygon.index = index;
                     polygons.push(polygon);
@@ -92,14 +95,14 @@ const Graph3D = () => {
                 r = Math.round(r * lumen);
                 g = Math.round(g * lumen);
                 b = Math.round(b * lumen);
-                graph.polygon(points, polygon.rgbToHex(r, g, b));
+                graph && graph.polygon(points, polygon.rgbToHex(r, g, b));
             });
         }
 
         if (showPoints) {
             scene.forEach(surface =>
                 surface.points.forEach(point => {
-                    graph.point(
+                    graph && graph.point(
                         math3D.xs(point),
                         math3D.ys(point),
                         '#000000'
@@ -113,7 +116,7 @@ const Graph3D = () => {
                 surface.edges.forEach(edge => {
                     const point1 = surface.points[edge.p1];
                     const point2 = surface.points[edge.p2];
-                    graph.line(
+                    graph && graph.line(
                         math3D.xs(point1), math3D.ys(point1),
                         math3D.xs(point2), math3D.ys(point2),
                         '#800080');
@@ -133,6 +136,7 @@ const Graph3D = () => {
                 mousemove,
                 mouseup,
                 mousedown,
+                mouseleave,
             },
         });
 
@@ -154,8 +158,8 @@ const Graph3D = () => {
         <div className="checkbox">
             <input className="customScene" data-custom="showPoints" type="checkbox" value="точки ннада?" />
             <input className="customScene" data-custom="showEdges" type="checkbox" value="рёбра ннада?" />
-            <input className="customScene" data-custom="showPolygons" type="checkbox" value="рёбра ннада?" checked />
-            <input className="customScene" data-custom="animationOn" type="checkbox" value="анимацию ннада?" checked />
+            <input className="customScene" data-custom="showPolygons" type="checkbox" value="рёбра ннада?" defaultChecked />
+            <input className="customScene" data-custom="animationOn" type="checkbox" value="анимацию ннада?" defaultChecked />
         </div>
         <div>
             <select className="selectFigures">

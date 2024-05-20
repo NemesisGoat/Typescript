@@ -1,15 +1,7 @@
-<<<<<<< Updated upstream
-import React, { useState } from "react"
-import { TFunc } from "./Func/Func"
-import { TFunction } from "../Graph2D"
-import useMyFunction from "./hooks/useMyFunction"
-
-=======
 import React, { useState } from "react";
 import { TFunction } from "../Graph2D";
 import useMyFunction from "./hooks/useMyFunction";
 import Func from "./Func/Func";
->>>>>>> Stashed changes
 
 type TUI2D = {
     funcs: TFunction[];
@@ -23,11 +15,7 @@ const UI2D: React.FC<TUI2D> = (props: TUI2D) => {
 
     const addFunction = () => {
         funcs.push({
-<<<<<<< Updated upstream
-            f: getFunction(0),
-=======
             f: getFunction('0'),
->>>>>>> Stashed changes
             color: 'black',
             width: 2
         });
