@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import useCalculator from "../../modules/Calculator/hooks/useCalculator";
-import { EOperand } from "../../modules/Calculator/calculators/ICalculator";
+import useCalculator from "../../modules/calculator/hooks/useCalculator";
+import { EOperand } from "../../modules/calculator/calculators/ICalculator";
 import './Calc.css';
 
 const Calc: React.FC = () => {

@@ -1,8 +1,20 @@
-import { useEffect } from "react";
+import { MouseEventHandler, useEffect, React } from "react";
 import useGraph, { TWIN3D, Graph } from '../../modules/Graph';
-import Math3D, { 
-    Point, Light, Polygon, EDistance, Sphera 
+import Math3D, {
+    Point, Light, Polygon, EDistance, Sphera, Cube
 } from "../../modules/Math3D";
+import Checkbox3D from "./Checkbox3D/Checkbox3D";
+
+export enum ECustom {
+    showPoints = 'showPoints',
+        showEdges = 'showEdges',
+        showPolygons = 'showPolygons',
+        animationOn = 'animationOn'
+}
+
+enum ESurface {
+    sphera = Sphera;
+}
 
 const Graph3D = () => {
     const WIN: TWIN3D = {
@@ -17,13 +29,17 @@ const Graph3D = () => {
     const [getGraph, cancelGraph] = useGraph(renderScene);
     const LIGHT = new Light(-40, 15, 0, 1500);
     const math3D = new Math3D({ WIN });
-    const scene = [new Sphera()];
+    let scene = [new Sphera()];
     // флажки
     let canMove = false;
-    let showPoints = false;
-    let showEdges = false;
-    let showPolygons = true;
-    let animationOn = true;
+
+    const custom = {
+        [ECustom.showPoints]: false,
+        [ECustom.showEdges]: false,
+        [ECustom.showPolygons]: true,
+        [ECustom.animationOn]: true
+    }
+
     let dx = 0;
     let dy = 0;
 
@@ -72,7 +88,7 @@ const Graph3D = () => {
             return;
         }
         graph.clear();
-        if (showPolygons) {
+        if (custom.showPolygons) {
             const polygons: Polygon[] = [];
             scene.forEach((surface, index) => {
                 math3D.calcDistance(surface, WIN.CAMERA, EDistance.distance);
@@ -99,7 +115,7 @@ const Graph3D = () => {
             });
         }
 
-        if (showPoints) {
+        if (custom.showPoints) {
             scene.forEach(surface =>
                 surface.points.forEach(point => {
                     graph && graph.point(
@@ -111,7 +127,7 @@ const Graph3D = () => {
             );
         }
 
-        if (showEdges) {
+        if (custom.showEdges) {
             scene.forEach(surface =>
                 surface.edges.forEach(edge => {
                     const point1 = surface.points[edge.p1];
@@ -122,6 +138,17 @@ const Graph3D = () => {
                         '#800080');
                 })
             );
+        }
+    }
+    
+    const changeValue = (flag: ECustom, value: boolean) => {
+        custom[flag] = value;
+    }
+
+    const changeScene = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        switch (event.target.value) {
+            case 'Sphera': scene = [new Sphera()]; break;
+            case 'Cube': scene = [new Cube()]; break;
         }
     }
 
@@ -141,7 +168,7 @@ const Graph3D = () => {
         });
 
         const interval = setInterval(() => {
-            if (animationOn) {
+            if (custom.animationOn) {
                 scene.forEach(surface => surface.doAnimation(math3D));
             }
         }, 50);
@@ -156,13 +183,37 @@ const Graph3D = () => {
         <button id="move">move</button>
         <canvas id='graph3DCanvas' />
         <div className="checkbox">
-            <input className="customScene" data-custom="showPoints" type="checkbox" value="точки ннада?" />
-            <input className="customScene" data-custom="showEdges" type="checkbox" value="рёбра ннада?" />
-            <input className="customScene" data-custom="showPolygons" type="checkbox" value="рёбра ннада?" defaultChecked />
-            <input className="customScene" data-custom="animationOn" type="checkbox" value="анимацию ннада?" defaultChecked />
+            <Checkbox3D
+                text="Точки"
+                id="points"
+                custom={ECustom.showPoints}
+                customValue={custom[ECustom.showPoints]}
+                changeValue={changeValue}
+            />
+            <Checkbox3D
+                text="Точки"
+                id="edges"
+                custom={ECustom.showEdges}
+                customValue={custom[ECustom.showEdges]}
+                changeValue={changeValue}
+            />
+            <Checkbox3D
+                text="Точки"
+                id="polygons"
+                custom={ECustom.showPolygons}
+                customValue={custom[ECustom.showPolygons]}
+                changeValue={changeValue}
+            />
+            <Checkbox3D
+                text="Точки"
+                id="animation"
+                custom={ECustom.animationOn}
+                customValue={custom[ECustom.animationOn]}
+                changeValue={changeValue}
+            />
         </div>
         <div>
-            <select className="selectFigures">
+            <select onChange={changeScene} className="selectFigures">
                 <option value="0">фигурки</option>
                 <option value="cube">кубик</option>
                 <option value="pyramid">пирамидка</option>
