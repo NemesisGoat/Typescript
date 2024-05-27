@@ -15,8 +15,11 @@ export type TWIN2D = {
 }
 
 export type TWIN3D = TWIN2D & {
+    P1: Point;
+    P2: Point;
+    P3: Point;
     CAMERA: Point;
-    CENTER: Point
+    CENTER: Point;
 }
 
 export type TGraph = {

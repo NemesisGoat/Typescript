@@ -11,7 +11,7 @@ const Header: React.FC<THeader> = (props: THeader) => {
     return (<div>
         <button onClick={() => setPageName(EPAGES.GRAPH_2D)}>Графика 2Д</button>
         <button onClick={() => setPageName(EPAGES.GRAPH_3D)}>Графика 3Д</button>
-        {/* <button onClick={() => setPageName(EPAGES.CALC)}>Бульбулятор</button> */}
+        <button onClick={() => setPageName(EPAGES.CALC)}>Бульбулятор</button>
     </div>);
 }
 

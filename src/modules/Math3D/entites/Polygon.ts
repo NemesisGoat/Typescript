@@ -19,6 +19,7 @@ class Polygon {
     [EDistance.lumen]: number = 1;
     index = 0;
     R = 0;
+    visibility: boolean = true;
 
     constructor(points: number[] = [], color = '#dc143c') {
         this.points = points;

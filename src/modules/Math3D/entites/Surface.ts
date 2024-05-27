@@ -4,8 +4,8 @@ import Point from "./Point";
 import Polygon from "./Polygon";
 
 export type TAnimation = {
-    method: ETransform; 
-    value: number; 
+    method: ETransform;
+    value: number;
     center: Point;
 }
 
@@ -16,7 +16,12 @@ class Surface {
     center: Point
     animations: TAnimation[];
 
-    constructor(points = [], edges = [], polygons = [], center = new Point) {
+    constructor(
+        points: Point[] = [],
+        edges: Edge[] = [],
+        polygons: Polygon[] = [],
+        center = new Point
+    ) {
         this.points = points;
         this.edges = edges;
         this.polygons = polygons;

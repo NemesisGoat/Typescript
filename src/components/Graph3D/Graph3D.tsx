@@ -1,19 +1,23 @@
-import { MouseEventHandler, useEffect, React } from "react";
+import { useEffect } from "react";
 import useGraph, { TWIN3D, Graph } from '../../modules/Graph';
 import Math3D, {
     Point, Light, Polygon, EDistance, Sphera, Cube
 } from "../../modules/Math3D";
+import Surface from "../../modules/Math3D/entites/Surface";
 import Checkbox3D from "./Checkbox3D/Checkbox3D";
+import React from "react";
+import { TObjectVector } from "../../modules/Math3D/Math3D";
 
 export enum ECustom {
     showPoints = 'showPoints',
-        showEdges = 'showEdges',
-        showPolygons = 'showPolygons',
-        animationOn = 'animationOn'
+    showEdges = 'showEdges',
+    showPolygons = 'showPolygons',
+    animationOn = 'animationOn',
 }
 
-enum ESurface {
-    sphera = Sphera;
+type TPoint2D = {
+    x: number;
+    y: number;
 }
 
 const Graph3D = () => {
@@ -22,6 +26,9 @@ const Graph3D = () => {
         BOTTOM: -5,
         WIDTH: 10,
         HEIGHT: 10,
+        P1: new Point(-10, 10, -30),
+        P2: new Point(-10, -10, -30),
+        P3: new Point(10, -10, -30),
         CENTER: new Point(0, 0, -40),
         CAMERA: new Point(0, 0, -50)
     }
@@ -29,19 +36,19 @@ const Graph3D = () => {
     const [getGraph, cancelGraph] = useGraph(renderScene);
     const LIGHT = new Light(-40, 15, 0, 1500);
     const math3D = new Math3D({ WIN });
-    let scene = [new Sphera()];
+    let scene: Surface[] = [new Sphera()];
     // флажки
     let canMove = false;
-
     const custom = {
         [ECustom.showPoints]: false,
         [ECustom.showEdges]: false,
         [ECustom.showPolygons]: true,
-        [ECustom.animationOn]: true
+        [ECustom.animationOn]: false,
     }
-
     let dx = 0;
     let dy = 0;
+    let P1P2: TObjectVector;
+    let P2P3: TObjectVector;
 
     function mouseup() {
         canMove = false;
@@ -55,18 +62,21 @@ const Graph3D = () => {
         canMove = true;
     }
 
-    // надо как-то поменять
     function mousemove(event: MouseEvent) {
-        const gradus = Math.PI / 180 / 4;
         if (canMove) {
-            scene.forEach(surface =>
-                surface.points.forEach(point => {
-                    const T1 = math3D.rotateOy((dx - event.offsetX) * gradus);
-                    const T2 = math3D.rotateOx((dy - event.offsetY) * gradus);
-                    const T = math3D.getTransform(T1, T2);
-                    math3D.transform(T, point);
-                })
-            );
+            const gradus = Math.PI / 180 / 4;
+            const matrixOx = math3D.rotateOx((dx - event.offsetX) * gradus);
+            const matrixOy = math3D.rotateOy((dy - event.offsetY) * gradus);
+            math3D.transform(matrixOx, WIN.CAMERA);
+            math3D.transform(matrixOx, WIN.CENTER);
+            math3D.transform(matrixOx, WIN.P1);
+            math3D.transform(matrixOx, WIN.P2);
+            math3D.transform(matrixOx, WIN.P3);
+            math3D.transform(matrixOy, WIN.CAMERA);
+            math3D.transform(matrixOy, WIN.CENTER);
+            math3D.transform(matrixOy, WIN.P1);
+            math3D.transform(matrixOy, WIN.P2);
+            math3D.transform(matrixOy, WIN.P3);
         }
         dx = event.offsetX;
         dy = event.offsetY;
@@ -74,13 +84,31 @@ const Graph3D = () => {
 
     function wheel(event: WheelEvent) {
         event.preventDefault();
-        const delta = (event.deltaY > 0) ? 1.1 : 0.9;
+        const delta = (event.deltaY > 0) ? 1.2 : 0.8;
         const matrix = math3D.zoom(delta);
-        scene.forEach(surface =>
-            surface.points.forEach(point =>
-                math3D.transform(matrix, point)
-            )
-        );
+        math3D.transform(matrix, WIN.CAMERA);
+        math3D.transform(matrix, WIN.CENTER);
+    }
+
+    function calcPlaneEquation(): void {
+        math3D.calcPlaneEquation(WIN.CAMERA, WIN.CENTER)
+    }
+
+    function getProection(point: Point): TPoint2D {
+        const M = math3D.getProection(point);
+        const P2M = math3D.getVector(WIN.P2, M);
+        const cosa = math3D.calcCorner(P1P2, M);
+        const cosb = math3D.calcCorner(P2P3, M);
+        const module = math3D.moduleVector(P2M);
+        return {
+            x: cosa * module,
+            y: cosb * module
+        }
+    }
+
+    function calcWindowVectors(): void {
+        P1P2 = math3D.getVector(WIN.P2, WIN.P1);
+        P2P3 = math3D.getVector(WIN.P3, WIN.P2);
     }
 
     function renderScene(FPS: number): void {
@@ -93,6 +121,9 @@ const Graph3D = () => {
             scene.forEach((surface, index) => {
                 math3D.calcDistance(surface, WIN.CAMERA, EDistance.distance);
                 math3D.calcDistance(surface, LIGHT, EDistance.lumen);
+                math3D.calcCenter(surface);
+                math3D.calcRadius(surface);
+                math3D.calcVisibiliy(surface, WIN.CAMERA);
                 surface.polygons.forEach(polygon => {
                     polygon.index = index;
                     polygons.push(polygon);
@@ -100,18 +131,22 @@ const Graph3D = () => {
             });
             math3D.sortByArtistAlgorithm(polygons);
             polygons.forEach(polygon => {
-                const points = polygon.points.map(index =>
-                    new Point(
-                        math3D.xs(scene[polygon.index].points[index]),
-                        math3D.ys(scene[polygon.index].points[index])
-                    )
-                );
-                const lumen = math3D.calcIllumination(polygon.lumen, LIGHT.lumen);
-                let { r, g, b } = polygon.color;
-                r = Math.round(r * lumen);
-                g = Math.round(g * lumen);
-                b = Math.round(b * lumen);
-                graph && graph.polygon(points, polygon.rgbToHex(r, g, b));
+                if (polygon.visibility) {
+                    const points = polygon.points.map(index =>
+                        new Point(
+                            getProection(scene[polygon.index].points[index]).x,
+                            getProection(scene[polygon.index].points[index]).y
+                        )
+                    );
+                    const {isShadow, dark} = math3D.calcShadow(polygon, scene, LIGHT);
+                    if (!dark) { return };
+                    const lumen = math3D.calcIllumination(polygon.lumen, LIGHT.lumen * (isShadow ? dark : 1));
+                    let { r, g, b } = polygon.color;
+                    r = Math.round(r * lumen);
+                    g = Math.round(g * lumen);
+                    b = Math.round(b * lumen);
+                    graph && graph.polygon(points, polygon.rgbToHex(r, g, b));
+                }
             });
         }
 
@@ -119,8 +154,8 @@ const Graph3D = () => {
             scene.forEach(surface =>
                 surface.points.forEach(point => {
                     graph && graph.point(
-                        math3D.xs(point),
-                        math3D.ys(point),
+                        getProection(point).x,
+                        getProection(point).y,
                         '#000000'
                     );
                 })
@@ -133,14 +168,14 @@ const Graph3D = () => {
                     const point1 = surface.points[edge.p1];
                     const point2 = surface.points[edge.p2];
                     graph && graph.line(
-                        math3D.xs(point1), math3D.ys(point1),
-                        math3D.xs(point2), math3D.ys(point2),
+                        getProection(point1).x, getProection(point1).y,
+                        getProection(point2).x, getProection(point2).y,
                         '#800080');
                 })
             );
         }
     }
-    
+
     const changeValue = (flag: ECustom, value: boolean) => {
         custom[flag] = value;
     }
@@ -173,6 +208,9 @@ const Graph3D = () => {
             }
         }, 50);
 
+        calcPlaneEquation();
+        calcWindowVectors();
+
         return () => {
             clearInterval(interval);
             cancelGraph();
@@ -184,28 +222,28 @@ const Graph3D = () => {
         <canvas id='graph3DCanvas' />
         <div className="checkbox">
             <Checkbox3D
-                text="Точки"
+                text="точки"
                 id="points"
                 custom={ECustom.showPoints}
                 customValue={custom[ECustom.showPoints]}
                 changeValue={changeValue}
             />
             <Checkbox3D
-                text="Точки"
+                text="рёбра"
                 id="edges"
                 custom={ECustom.showEdges}
                 customValue={custom[ECustom.showEdges]}
                 changeValue={changeValue}
             />
             <Checkbox3D
-                text="Точки"
+                text="полигоны"
                 id="polygons"
                 custom={ECustom.showPolygons}
                 customValue={custom[ECustom.showPolygons]}
                 changeValue={changeValue}
             />
             <Checkbox3D
-                text="Точки"
+                text="анимация"
                 id="animation"
                 custom={ECustom.animationOn}
                 customValue={custom[ECustom.animationOn]}
@@ -214,10 +252,9 @@ const Graph3D = () => {
         </div>
         <div>
             <select onChange={changeScene} className="selectFigures">
-                <option value="0">фигурки</option>
-                <option value="cube">кубик</option>
+                <option value="Sphera">сфера</option>
+                <option value="Cube">кубик</option>
                 <option value="pyramid">пирамидка</option>
-                <option value="sphera">сфера</option>
                 <option value="torus">Бог грома</option>
                 <option value="KleinBottle">бутылка Клейна</option>
                 <option value="cone">конус</option>

@@ -1,14 +1,11 @@
-import AnyType from "./AnyType";
-
 class Vector {
-    values: AnyType[];
-    constructor(value: AnyType[] = []) {
+    constructor (values = []) {
         this.values = [];
-        value.forEach(el => this.values.push(el));
+        values.forEach(el => this.values.push(el));
     }
 
     // vector -> (1; 2; 3)
-    toString(): string {
+    toString() {
         return `(${this.values.map(el => el.toString()).join('; ')})`;
     }
 }
