@@ -13,7 +13,7 @@ export enum EPAGES {
 }
 
 const App: React.FC = () => {
-    const [pageName, setPageName] = useState<EPAGES>(EPAGES.GRAPH_2D);
+    const [pageName, setPageName] = useState<EPAGES>(EPAGES.GRAPH_3D);
 
     return (<>
         <Header setPageName={setPageName} />

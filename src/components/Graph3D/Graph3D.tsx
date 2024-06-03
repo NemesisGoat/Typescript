@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import useGraph, { TWIN3D, Graph } from '../../modules/Graph';
 import Math3D, {
-    Point, Light, Polygon, EDistance, Sphera, Cube
+    Point, Light, Polygon, EDistance, Sphere, Cube, Ellipsoid,
+    Thor,
+    TwoSurfaceHyperboloid
 } from "../../modules/Math3D";
 import Surface from "../../modules/Math3D/entites/Surface";
 import Checkbox3D from "./Checkbox3D/Checkbox3D";
@@ -36,7 +38,7 @@ const Graph3D = () => {
     const [getGraph, cancelGraph] = useGraph(renderScene);
     const LIGHT = new Light(-40, 15, 0, 1500);
     const math3D = new Math3D({ WIN });
-    let scene: Surface[] = [new Sphera()];
+    let scene: Surface[] = [new Sphere()];
     // флажки
     let canMove = false;
     const custom = {
@@ -66,7 +68,7 @@ const Graph3D = () => {
         if (canMove) {
             const gradus = Math.PI / 180 / 4;
             const matrixOx = math3D.rotateOx((dx - event.offsetX) * gradus);
-            const matrixOy = math3D.rotateOy((dy - event.offsetY) * gradus);
+            const matrixOy = math3D.rotateOy((-dy + event.offsetY) * gradus);
             math3D.transform(matrixOx, WIN.CAMERA);
             math3D.transform(matrixOx, WIN.CENTER);
             math3D.transform(matrixOx, WIN.P1);
@@ -116,6 +118,8 @@ const Graph3D = () => {
             return;
         }
         graph.clear();
+        calcPlaneEquation();
+        calcWindowVectors();
         if (custom.showPolygons) {
             const polygons: Polygon[] = [];
             scene.forEach((surface, index) => {
@@ -131,6 +135,13 @@ const Graph3D = () => {
             });
             math3D.sortByArtistAlgorithm(polygons);
             polygons.forEach(polygon => {
+                //
+                //
+                //
+                // починить расчёт видимости
+                //
+                //
+                //
                 if (polygon.visibility) {
                     const points = polygon.points.map(index =>
                         new Point(
@@ -139,7 +150,6 @@ const Graph3D = () => {
                         )
                     );
                     const {isShadow, dark} = math3D.calcShadow(polygon, scene, LIGHT);
-                    if (!dark) { return };
                     const lumen = math3D.calcIllumination(polygon.lumen, LIGHT.lumen * (isShadow ? dark : 1));
                     let { r, g, b } = polygon.color;
                     r = Math.round(r * lumen);
@@ -182,8 +192,11 @@ const Graph3D = () => {
 
     const changeScene = (event: React.ChangeEvent<HTMLSelectElement>) => {
         switch (event.target.value) {
-            case 'Sphera': scene = [new Sphera()]; break;
+            case 'Sphere': scene = [new Sphere()]; break;
             case 'Cube': scene = [new Cube()]; break;
+            case 'Ellipsoid': scene = [new Ellipsoid()]; break;
+            case 'Thor': scene = [new Thor()]; break;
+            case 'TwoSurfaceHyperboloid': scene = [new TwoSurfaceHyperboloid()]; break;
         }
     }
 
@@ -218,7 +231,6 @@ const Graph3D = () => {
     });
 
     return (<div className="beautyDiv">
-        <button id="move">move</button>
         <canvas id='graph3DCanvas' />
         <div className="checkbox">
             <Checkbox3D
@@ -252,18 +264,18 @@ const Graph3D = () => {
         </div>
         <div>
             <select onChange={changeScene} className="selectFigures">
-                <option value="Sphera">сфера</option>
-                <option value="Cube">кубик</option>
+                <option value="Sphere">Сфера</option>
+                <option value="Cube">Куб</option>
                 <option value="pyramid">пирамидка</option>
-                <option value="torus">Бог грома</option>
+                <option value="Thor">Тор</option>
                 <option value="KleinBottle">бутылка Клейна</option>
                 <option value="cone">конус</option>
-                <option value="ellipsoid">эллипсоид</option>
+                <option value="Ellipsoid">Эллипсоид</option>
                 <option value="hyperbolicCylinder">гиперболический цилиндр</option>
                 <option value="parabolicCylinder">параболический цилиндр</option>
                 <option value="ellipticalCylinder">эллиптический цилиндр</option>
                 <option value="singleStripHyperboloid">однополосной гиперболоид</option>
-                <option value="doubleStripHyperboloid">двуполосной гиперболоид</option>
+                <option value="TwoSurfaceHyperboloid">Двуполостной гиперболоид</option>
                 <option value="ellipticalParaboloid">эллиптический параболоид</option>
                 <option value="hyperbolicParaboloid">чипсина</option>
             </select>

@@ -319,7 +319,7 @@ class Math3D {
             const a = this.getVector(center, p1);
             const b = this.getVector(center, p2);
             const normal = this.multVector(a, b);
-            polygon.visibility = this.scalProd(normal, CAMERA) > 0;
+            polygon.visibility = this.scalProd(normal, CAMERA) < 0;
         })
     }
 }

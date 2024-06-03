@@ -1,4 +1,4 @@
-Surfaces.prototype.hyperbolicParaboloid = ({count = 20, a = 2, b = 2, color = '#ffff00'}) => {
+Surfaces.prototype.ellipticCylinder = ({count = 20, a = 2, b = 2}) => {
     const points = [];
     const edges = [];
     const polygons = [];
@@ -8,8 +8,8 @@ Surfaces.prototype.hyperbolicParaboloid = ({count = 20, a = 2, b = 2, color = '#
     for (let u = -Math.PI; u < Math.PI; u += da) {
         for (let v = -Math.PI; v < Math.PI; v += da) {
             const x = u
-            const y = v
-            const z = (x**2 / a**2) - (y**2 / b**2) / 2
+            const y = (1 - x**2 / a**2) * b**2
+            const z = v
             points.push(new Point(x, y, z));
         }
     }
@@ -33,7 +33,7 @@ Surfaces.prototype.hyperbolicParaboloid = ({count = 20, a = 2, b = 2, color = '#
                     i + 1,
                     i + count + 1,
                     i + count
-                ], color))
+                ], '#ffff00'))
             }
         }
 

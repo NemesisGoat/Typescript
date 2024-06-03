@@ -17,9 +17,9 @@ class Sphera extends Surface {
         //psi = -Pi...Pi
         //phi = 0...2 * Pi
         const da = Math.PI * 2 / count;
-        const points = [];
-        const edges = [];
-        const polygons = [];
+        const points: Point[] = [];
+        const edges: Edge[] = [];
+        const polygons: Polygon[] = [];
         for (let phi = 0; phi < Math.PI * 2; phi += da) {
             for (let psi = -Math.PI; psi < Math.PI; psi += da) {
                 const x = center.x + r * Math.cos(psi) * Math.cos(phi);
