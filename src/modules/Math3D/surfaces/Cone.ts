@@ -29,23 +29,6 @@ class Cone extends Surface {
                 ));
             }
         }
-        for (let i = -Math.PI; i <= Math.PI; i += dt) {
-            for (let j = 0; j < 2 * Math.PI; j += dt) {
-                points.push(new Point(
-                    a * i * Math.cos(j),
-                    c * Math.PI,
-                    Math.sin(j) * b * i
-                ));
-            }
-        }
-        for (let i = -Math.PI; i <= Math.PI; i += dt) {
-            for (let j = 0; j < 2 * Math.PI; j += dt) {
-                points.push(new Point(
-                    a * i * Math.cos(j), -c * Math.PI,
-                    Math.sin(j) * b * i
-                ));
-            }
-        }
 
         //ребра
         for (let i = 0; i < points.length; i++) {

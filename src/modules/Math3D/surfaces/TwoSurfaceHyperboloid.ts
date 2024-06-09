@@ -18,46 +18,81 @@ class TwoSurfaceHyperboloid extends Surface {
         const polygons: Polygon[] = [];
 
         // about points
-        const da = Math.PI * 2 / count;
-        for (let u = 0; u < Math.PI * 2; u += da) {
-            for (let v = -Math.PI; v < Math.PI; v += da) {
-                const x = a * Math.sinh(u) * Math.cos(v);
-                const y = b * Math.sinh(u) * Math.sin(v);
-                const z = c * Math.cosh(u);
-                points.push(new Point(x, y, z));
-            }
+        const dt = Math.PI * 2 / count;
+    for (let i = 0; i <= Math.PI; i += dt) {
+        for (let j = 0; j < 2 * Math.PI; j += dt) {
+            points.push(new Point(
+                a * Math.sinh(i) * Math.cos(j),
+                c * Math.cosh(i),
+                b * Math.cosh(i) * Math.sin(j)
+            ));
         }
-        for (let u = 0; u < Math.PI * 2; u += da) {
-            for (let v = -Math.PI; v < Math.PI; v += da) {
-                const x = a * Math.sinh(u) * Math.cos(v);
-                const y = b * Math.sinh(u) * Math.sin(v);
-                const z = -c * Math.cosh(u);
-                points.push(new Point(x, y, z));
-            }
+    }
+    for (let i = 0; i <= Math.PI; i += dt) {
+        for (let j = 0; j < 2 * Math.PI; j += dt) {
+            points.push(new Point(-a * Math.sinh(i) * Math.cos(j), -c * Math.cosh(i), -b * Math.cosh(i) * Math.sin(j)));
         }
-        // about edges
-        for (let i = 0; i < points.length; i++) {
-            if (points[i + 1]) {
-                if (((i + 1) % (count + 1) !== 0)) {
-                    edges.push(new Edge(i, i + 1));
-                }
-            }
-            if (points[i + count]) {
-                edges.push(new Edge(i, i + count));
-            }
-        }
+    }
 
-        for (let i = 0; i < points.length; i++) {
-            if (points[i + count + 1]) {
-                polygons.push(new Polygon([
-                    i,
-                    i + 1,
-                    i + count + 1,
-                    i + count
-                ], color))
-            }
-
+    //ребра
+    for (let i = 0; i < points.length/2; i++) {
+        //вдоль
+        if (i + 1 < points.length && (i + 1) % count !== 0) {
+            edges.push(new Edge(
+                i,
+                i + 1
+            ));
+        } else if ((i + 1) % count === 0) {
+            edges.push(new Edge(
+                i,
+                i + 1 - count
+            ));
         }
+        //поперек
+        if (i < points.length/2 - count) {
+            edges.push(new Edge(
+                i,
+                i + count
+            ));
+        }
+    }
+    for (let i = points.length/2+count; i < points.length; i++) {
+        //вдоль
+        if (i + 1 < points.length && (i + 1) % count !== 0) {
+            edges.push(new Edge(
+                i,
+                i + 1
+            ));
+        } else if ((i + 1) % count === 0) {
+            edges.push(new Edge(
+                i,
+                i + 1 - count
+            ));
+        }
+        //поперек
+        if (i < points.length - count) {
+            edges.push(new Edge(
+                i,
+                i + count
+            ));
+        }
+    }
+
+    //полигоны
+    for (let i = 0; i < points.length / 2 - count; i++) {
+        if (i + 1 + count < points.length && (i + 1) % count !== 0) {
+            polygons.push(new Polygon([i, i + 1, i + 1 + count, i + count]));
+        } else if (i + count < points.length && (i + 1) % count === 0) {
+            polygons.push(new Polygon([i, i + 1 - count, i + 1, i + count]))
+        }
+    }
+    for (let i = points.length / 2; i < points.length; i++) {
+        if (i + 1 + count < points.length && (i + 1) % count !== 0) {
+            polygons.push(new Polygon([i, i + 1, i + 1 + count, i + count]));
+        } else if (i + count < points.length && (i + 1) % count === 0) {
+            polygons.push(new Polygon([i, i + 1 - count, i + 1, i + count]))
+        }
+    }
 
         this.points = points;
         this.edges = edges;

@@ -26,6 +26,7 @@ class EllipticParaboloid extends Surface {
                 points.push(new Point(x, y, z));
             }
         }
+        console.log(points.length);
         // about edges
         for (let i = 0; i < points.length; i++) {
             if (points[i + 1]) {
@@ -59,7 +60,6 @@ class EllipticParaboloid extends Surface {
                     19
                 ], color))
             }
-
         }
 
         this.points = points;

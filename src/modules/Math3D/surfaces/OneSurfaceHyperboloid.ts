@@ -17,39 +17,43 @@ class OneSurfaceHyperboloid extends Surface {
         const edges: Edge[] = [];
         const polygons: Polygon[] = [];
 
-        // about points
-        const da = Math.PI * 2 / count;
-        for (let u = -Math.PI; u < Math.PI; u += da) {
-            for (let v = -Math.PI; v < Math.PI; v += da) {
-                const x = a * Math.cosh(u) * Math.cos(v);
-                const y = b * Math.cosh(u) * Math.sin(v);
-                const z = c * Math.sinh(u);
-                points.push(new Point(x, y, z));
-            }
-        }
-        // about edges
-        for (let i = 0; i < points.length; i++) {
-            if (points[i + 1]) {
-                if (((i + 1) % (count + 1) !== 0)) {
-                    edges.push(new Edge(i, i + 1));
-                }
-            }
-            if (points[i + count]) {
-                edges.push(new Edge(i, i + count));
-            }
-        }
+        //точки
+        const dt = Math.PI * 2 / count;
+        for (let i = -Math.PI; i <= Math.PI; i += dt) {
+            for (let j = 0; j < 2 * Math.PI; j += dt) {
+                points.push(new Point(
+                    a * Math.cosh(i) * Math.cos(j),
+                    c * Math.sinh(i),
+                    b * Math.cosh(i) * Math.sin(j)
+                ));
 
+            }
+        }
+        //ребра
         for (let i = 0; i < points.length; i++) {
-            if (points[i + count + 1]) {
-                polygons.push(new Polygon([
+            //вдоль
+            if (i + 1 < points.length && (i + 1) % count !== 0) {
+                edges.push(new Edge(
                     i,
-                    i + 1,
-                    i + count + 1,
-                    i + count
-                ], color))
+                    i + 1
+                ));
+            } else if (i + 1 >= count && (i + 1) % count === 0) {
+                edges.push(new Edge(
+                    i,
+                    i + 1 - count
+                ));
             }
-
         }
+
+        //полигоны
+        for (let i = 0; i < points.length; i++) {
+            if (i + 1 + count < points.length && (i + 1) % count !== 0) {
+                polygons.push(new Polygon([i, i + 1, i + 1 + count, i + count], color));
+            } else if (i + count < points.length && (i + 1) % count === 0) {
+                polygons.push(new Polygon([i, i + 1 - count, i + 1, i + count], color))
+            }
+        }
+
 
         this.points = points;
         this.edges = edges;

@@ -10,7 +10,8 @@ import Math3D, {
     HyperbolicParaboloid,
     OneSurfaceHyperboloid,
     KleinBottle,
-    Cone
+    Cone,
+    ParabolicCylinder
 } from "../../modules/Math3D";
 import Surface from "../../modules/Math3D/entites/Surface";
 import Checkbox3D from "./Checkbox3D/Checkbox3D";
@@ -134,7 +135,7 @@ const Graph3D = () => {
                 math3D.calcDistance(surface, LIGHT, EDistance.lumen);
                 math3D.calcCenter(surface);
                 math3D.calcRadius(surface);
-                math3D.calcVisibiliy(surface, WIN.CAMERA);
+                //math3D.calcVisibiliy(surface, WIN.CAMERA);
                 surface.polygons.forEach((polygon) => {
                     polygon.index = index;
                     polygons.push(polygon);
@@ -149,7 +150,7 @@ const Graph3D = () => {
                 //
                 //
                 //
-                if (true) {
+                if (polygon.visibility) {
                     const points = polygon.points.map(index =>
                         new Point(
                             getProection(scene[polygon.index].points[index]).x,
@@ -208,6 +209,7 @@ const Graph3D = () => {
             case 'TwoSurfaceHyperboloid': scene = [new TwoSurfaceHyperboloid()]; break;
             case 'OneSurfaceHyperboloid': scene = [new OneSurfaceHyperboloid()]; break;
             case 'EllipticCylynder': scene = [new EllipticCylinder()]; break;
+            case 'ParabolicCylinder': scene = [new ParabolicCylinder()]; break;
             case 'HyperbolicCylinder': scene = [new HyperbolicCylinder()]; break;
             case 'EllipticParaboloid': scene = [new EllipticParaboloid()]; break;
             case 'HyperbolicParaboloid': scene = [new HyperbolicParaboloid()]; break;
@@ -292,6 +294,7 @@ const Graph3D = () => {
                 {/* починить */}
                 <option value="EllipticCylynder">Эллиптический цилиндр</option>
                 <option value="EllipticParaboloid">Эллиптический параболоид</option>
+                <option value="ParabolicCylinder">Параболический цилиндр</option>
                 <option value="HyperbolicCylinder">Гиперболический цилиндр</option>
                 <option value="HyperbolicParaboloid">Гиперболический параболоид</option>
                 <option value="KleinBottle">Бутылка Клейна</option>
