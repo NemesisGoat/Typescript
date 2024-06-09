@@ -27,6 +27,7 @@ class Sphera extends Surface {
                 const z = center.z + r * Math.sin(psi);
                 points.push(new Point(x, y, z));
             }
+            console.log(points.length);
         }
 
         for (let i = 0; i < points.length; i++) {
@@ -59,6 +60,15 @@ class Sphera extends Surface {
                     ],
                     color
                 ));
+            } else if (points[i + 1]) {
+                polygons.push(new Polygon(
+                    [
+                        i, 
+                        i + 1,
+                        points.length % count + i,
+                        points.length % count + i + 1,
+                    ]
+                ))
             }
         }
 

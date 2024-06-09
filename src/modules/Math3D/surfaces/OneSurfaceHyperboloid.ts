@@ -3,35 +3,27 @@ import Point from "../entites/Point";
 import Polygon from "../entites/Polygon";
 import Surface from "../entites/Surface";
 
-class TwoSurfaceHyperboloid extends Surface {
+class OneSurfaceHyperboloid extends Surface {
     constructor(
         count = 30,
-        a = 0.1,
-        b = 0.1,
-        c = 0.1,
-        color = '#00ff00',
-        center = new Point
-    ) {
+        a = 1,
+        b = 1,
+        c = 1,
+        color = '#0000ff',
+        center = new Point) {
         super()
+
         const points: Point[] = [];
         const edges: Edge[] = [];
         const polygons: Polygon[] = [];
 
         // about points
         const da = Math.PI * 2 / count;
-        for (let u = 0; u < Math.PI * 2; u += da) {
+        for (let u = -Math.PI; u < Math.PI; u += da) {
             for (let v = -Math.PI; v < Math.PI; v += da) {
-                const x = a * Math.sinh(u) * Math.cos(v);
-                const y = b * Math.sinh(u) * Math.sin(v);
-                const z = c * Math.cosh(u);
-                points.push(new Point(x, y, z));
-            }
-        }
-        for (let u = 0; u < Math.PI * 2; u += da) {
-            for (let v = -Math.PI; v < Math.PI; v += da) {
-                const x = a * Math.sinh(u) * Math.cos(v);
-                const y = b * Math.sinh(u) * Math.sin(v);
-                const z = -c * Math.cosh(u);
+                const x = a * Math.cosh(u) * Math.cos(v);
+                const y = b * Math.cosh(u) * Math.sin(v);
+                const z = c * Math.sinh(u);
                 points.push(new Point(x, y, z));
             }
         }
@@ -66,4 +58,4 @@ class TwoSurfaceHyperboloid extends Surface {
     }
 }
 
-export default TwoSurfaceHyperboloid;
+export default OneSurfaceHyperboloid;

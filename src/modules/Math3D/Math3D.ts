@@ -38,7 +38,7 @@ type TMatrix = number[][];
 type TVector = number[];
 type TShadow = {
     isShadow: boolean;
-    dark?: number;
+    dark: number;
 }
 
 export enum ETransform {

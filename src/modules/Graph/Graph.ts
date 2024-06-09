@@ -88,7 +88,7 @@ class Graph {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     }
 
-    line(x1: number, y1: number, x2: number, y2: number, color = '#b55a5d', width = 2): void {
+    line(x1: number, y1: number, x2: number, y2: number, color = 'black', width = 2): void {
         this.contextV.beginPath();
         this.contextV.strokeStyle = color;
         this.contextV.lineWidth = width;
@@ -122,7 +122,7 @@ class Graph {
         this.contextV.stroke();
     };
 
-    polygon(points: Omit<Point, 'z'>[], color = 'purple'): void {
+    polygon(points: Omit<Point, 'z'>[], color = 'green'): void {
         this.context.beginPath();
         this.context.fillStyle = color;
         this.context.moveTo(this.xs(points[0].x), this.ys(points[0].y));

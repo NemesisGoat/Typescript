@@ -3,7 +3,14 @@ import useGraph, { TWIN3D, Graph } from '../../modules/Graph';
 import Math3D, {
     Point, Light, Polygon, EDistance, Sphere, Cube, Ellipsoid,
     Thor,
-    TwoSurfaceHyperboloid
+    TwoSurfaceHyperboloid,
+    EllipticCylinder,
+    EllipticParaboloid,
+    HyperbolicCylinder,
+    HyperbolicParaboloid,
+    OneSurfaceHyperboloid,
+    KleinBottle,
+    Cone
 } from "../../modules/Math3D";
 import Surface from "../../modules/Math3D/entites/Surface";
 import Checkbox3D from "./Checkbox3D/Checkbox3D";
@@ -36,9 +43,9 @@ const Graph3D = () => {
     }
     let graph: Graph | null = null;
     const [getGraph, cancelGraph] = useGraph(renderScene);
-    const LIGHT = new Light(-40, 15, 0, 1500);
+    let LIGHT = new Light(-40, 15, -10, 1500);
     const math3D = new Math3D({ WIN });
-    let scene: Surface[] = [new Sphere()];
+    let scene: Surface[] = [new (Cube)];
     // флажки
     let canMove = false;
     const custom = {
@@ -128,13 +135,13 @@ const Graph3D = () => {
                 math3D.calcCenter(surface);
                 math3D.calcRadius(surface);
                 math3D.calcVisibiliy(surface, WIN.CAMERA);
-                surface.polygons.forEach(polygon => {
+                surface.polygons.forEach((polygon) => {
                     polygon.index = index;
                     polygons.push(polygon);
                 });
             });
             math3D.sortByArtistAlgorithm(polygons);
-            polygons.forEach(polygon => {
+            polygons.forEach((polygon) => {
                 //
                 //
                 //
@@ -142,14 +149,14 @@ const Graph3D = () => {
                 //
                 //
                 //
-                if (polygon.visibility) {
+                if (true) {
                     const points = polygon.points.map(index =>
                         new Point(
                             getProection(scene[polygon.index].points[index]).x,
                             getProection(scene[polygon.index].points[index]).y
                         )
                     );
-                    const {isShadow, dark} = math3D.calcShadow(polygon, scene, LIGHT);
+                    const { isShadow, dark } = math3D.calcShadow(polygon, scene, LIGHT);
                     const lumen = math3D.calcIllumination(polygon.lumen, LIGHT.lumen * (isShadow ? dark : 1));
                     let { r, g, b } = polygon.color;
                     r = Math.round(r * lumen);
@@ -162,7 +169,7 @@ const Graph3D = () => {
 
         if (custom.showPoints) {
             scene.forEach(surface =>
-                surface.points.forEach(point => {
+                surface.points.forEach((point, index) => {
                     graph && graph.point(
                         getProection(point).x,
                         getProection(point).y,
@@ -180,10 +187,11 @@ const Graph3D = () => {
                     graph && graph.line(
                         getProection(point1).x, getProection(point1).y,
                         getProection(point2).x, getProection(point2).y,
-                        '#800080');
+                        edge.color, 1);
                 })
             );
         }
+        graph.print(2, 2, 'FPS:' + FPS.toString(), '#000000', 200);
     }
 
     const changeValue = (flag: ECustom, value: boolean) => {
@@ -195,9 +203,20 @@ const Graph3D = () => {
             case 'Sphere': scene = [new Sphere()]; break;
             case 'Cube': scene = [new Cube()]; break;
             case 'Ellipsoid': scene = [new Ellipsoid()]; break;
+            case 'Cone': scene = [new Cone()]; break;
             case 'Thor': scene = [new Thor()]; break;
             case 'TwoSurfaceHyperboloid': scene = [new TwoSurfaceHyperboloid()]; break;
+            case 'OneSurfaceHyperboloid': scene = [new OneSurfaceHyperboloid()]; break;
+            case 'EllipticCylynder': scene = [new EllipticCylinder()]; break;
+            case 'HyperbolicCylinder': scene = [new HyperbolicCylinder()]; break;
+            case 'EllipticParaboloid': scene = [new EllipticParaboloid()]; break;
+            case 'HyperbolicParaboloid': scene = [new HyperbolicParaboloid()]; break;
+            case 'KleinBottle': scene = [new KleinBottle()]; break;
         }
+    }
+
+    const changeLumen = (event: React.ChangeEvent<HTMLInputElement>) => {
+        LIGHT.lumen = Number(event.target.value);
     }
 
     useEffect(() => {
@@ -264,22 +283,22 @@ const Graph3D = () => {
         </div>
         <div>
             <select onChange={changeScene} className="selectFigures">
-                <option value="Sphere">Сфера</option>
                 <option value="Cube">Куб</option>
-                <option value="pyramid">пирамидка</option>
-                <option value="Thor">Тор</option>
-                <option value="KleinBottle">бутылка Клейна</option>
-                <option value="cone">конус</option>
+                <option value="Sphere">Сфера</option>
                 <option value="Ellipsoid">Эллипсоид</option>
-                <option value="hyperbolicCylinder">гиперболический цилиндр</option>
-                <option value="parabolicCylinder">параболический цилиндр</option>
-                <option value="ellipticalCylinder">эллиптический цилиндр</option>
-                <option value="singleStripHyperboloid">однополосной гиперболоид</option>
+                <option value="Cone">Конус</option>
                 <option value="TwoSurfaceHyperboloid">Двуполостной гиперболоид</option>
-                <option value="ellipticalParaboloid">эллиптический параболоид</option>
-                <option value="hyperbolicParaboloid">чипсина</option>
+                <option value="OneSurfaceHyperboloid">Однополостной гиперболоид</option>
+                {/* починить */}
+                <option value="EllipticCylynder">Эллиптический цилиндр</option>
+                <option value="EllipticParaboloid">Эллиптический параболоид</option>
+                <option value="HyperbolicCylinder">Гиперболический цилиндр</option>
+                <option value="HyperbolicParaboloid">Гиперболический параболоид</option>
+                <option value="KleinBottle">Бутылка Клейна</option>
             </select>
         </div>
+        <input onChange={changeLumen} type="range" id="changeLumen" name="lumenLevel" min={0} max={4000} defaultValue={1500}></input>
+        <label htmlFor="lumenLevel"> Уровень освещения</label>
     </div>);
 }
 

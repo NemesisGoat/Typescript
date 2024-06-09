@@ -7,6 +7,13 @@ import Cube from "./surfaces/Cube";
 import Ellipsoid from "./surfaces/Ellipsoid";
 import Thor from "./surfaces/Thor";
 import TwoSurfaceHyperboloid from "./surfaces/TwoSurfaceHyperboloid";
+import EllipticCylinder from "./surfaces/EllipticCylinder";
+import EllipticParaboloid from "./surfaces/EllipticParaboloid";
+import HyperbolicCylinder from "./surfaces/HyperbolicCylinder";
+import HyperbolicParaboloid from "./surfaces/HyperbolicParaboloid";
+import OneSurfaceHyperboloid from "./surfaces/OneSurfaceHyperboloid";
+import KleinBottle from "./surfaces/KleinBottle";
+import Cone from "./surfaces/Cone";
 
-export { Point, Light, Polygon, Sphere, EDistance, Cube, Ellipsoid, Thor, TwoSurfaceHyperboloid };
+export { Point, Light, Polygon, Sphere, EDistance, Cube, Ellipsoid, Thor, TwoSurfaceHyperboloid, EllipticCylinder, EllipticParaboloid, HyperbolicCylinder, HyperbolicParaboloid, OneSurfaceHyperboloid, KleinBottle, Cone};
 export default Math3D;
